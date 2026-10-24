@@ -4,29 +4,19 @@ import pandas as pd
 import plotly.express as px
 from pathlib import Path
 
-st.set_page_config(
-    page_title="Netflix Release-Year Trend Analysis",
-    page_icon="📈",
-    layout="wide"
-)
+st.set_page_config(page_title="Netflix Release-Year Trend Analysis", page_icon="📈", layout="wide")
 
 st.markdown("""
 <style>
-.stApp {
-    background: linear-gradient(135deg, #fff8f0, #ffeddc, #fffaf5);
-}
-h1, h2, h3 {
-    color: #925b3c;
-}
+.stApp {background: linear-gradient(135deg, #fff8f0, #ffeddc, #fffaf5);}
+h1, h2, h3 {color: #925b3c;}
 [data-testid="stMetric"] {
-    background: rgba(255, 255, 255, 0.88);
+    background: rgba(255,255,255,0.88);
     border: 1px solid #f0d4bf;
     padding: 18px;
     border-radius: 16px;
 }
-.stButton button, .stDownloadButton button {
-    border-radius: 10px;
-}
+.stButton button, .stDownloadButton button {border-radius: 10px;}
 </style>
 """, unsafe_allow_html=True)
 
@@ -35,17 +25,14 @@ data_path = Path(__file__).parent / "Dataset.csv"
 try:
     df = pd.read_csv(data_path)
 except FileNotFoundError:
-    st.error("Dataset.csv not found. Place it in the same folder as app.py.")
+    st.error("Dataset.csv was not found. Place it in the same folder as app.py.")
     st.stop()
 
 required_columns = {"show_id", "title", "type", "release_year"}
 missing_columns = required_columns - set(df.columns)
 
 if missing_columns:
-    st.error(
-        "Dataset is missing required columns: "
-        + ", ".join(sorted(missing_columns))
-    )
+    st.error("Dataset is missing required columns: " + ", ".join(sorted(missing_columns)))
     st.stop()
 
 df["release_year"] = pd.to_numeric(df["release_year"], errors="coerce")
@@ -63,11 +50,10 @@ st.title("📈 Netflix Release-Year Trend Analysis")
 st.caption("Auspify Technologies | Data Analysis Using Python")
 st.markdown("---")
 
-col1, col2, col3 = st.columns(3)
-
-col1.metric("Titles Analyzed", f"{len(df):,}")
-col2.metric("Earliest Release Year", str(df["release_year"].min()))
-col3.metric("Latest Release Year", str(df["release_year"].max()))
+c1, c2, c3 = st.columns(3)
+c1.metric("Titles Analyzed", f"{len(df):,}")
+c2.metric("Earliest Release Year", str(df["release_year"].min()))
+c3.metric("Latest Release Year", str(df["release_year"].max()))
 
 st.markdown("---")
 st.subheader("📊 Netflix Titles by Release Year")
@@ -95,11 +81,7 @@ line_chart.update_layout(
     margin=dict(l=10, r=10, t=55, b=10)
 )
 
-st.plotly_chart(
-    line_chart,
-    width="stretch",
-    key="release_year_line_chart"
-)
+st.plotly_chart(line_chart, width="stretch", key="release_year_line_chart")
 
 st.markdown("---")
 st.subheader("🏆 Top 10 Release Years by Title Count")
@@ -133,11 +115,7 @@ bar_chart.update_layout(
     margin=dict(l=10, r=35, t=55, b=10)
 )
 
-st.plotly_chart(
-    bar_chart,
-    width="stretch",
-    key="top_release_years_chart"
-)
+st.plotly_chart(bar_chart, width="stretch", key="top_release_years_chart")
 
 st.markdown("---")
 st.subheader("🔎 Explore Titles by Release Year")
@@ -158,16 +136,15 @@ filtered = df[
     df["release_year"].between(start_year, end_year)
 ].copy()
 
-left, middle, right = st.columns(3)
-
-left.metric("Titles in Selected Range", f"{len(filtered):,}")
-middle.metric("Movies", f"{(filtered['type'] == 'Movie').sum():,}")
-right.metric("TV Shows", f"{(filtered['type'] == 'TV Show').sum():,}")
+c1, c2, c3 = st.columns(3)
+c1.metric("Titles in Selected Range", f"{len(filtered):,}")
+c2.metric("Movies", f"{(filtered['type'] == 'Movie').sum():,}")
+c3.metric("TV Shows", f"{(filtered['type'] == 'TV Show').sum():,}")
 
 preview_columns = [
-    col for col in [
+    column for column in [
         "title", "type", "release_year", "country", "rating"
-    ] if col in filtered.columns
+    ] if column in filtered.columns
 ]
 
 st.dataframe(
@@ -182,7 +159,7 @@ st.markdown("---")
 st.subheader("📥 Download Analysis")
 
 st.download_button(
-    label="Download Release-Year Summary CSV",
+    "Download Release-Year Summary CSV",
     data=year_counts.to_csv(index=False).encode("utf-8"),
     file_name="release_year_analysis.csv",
     mime="text/csv",
@@ -190,7 +167,7 @@ st.download_button(
 )
 
 st.download_button(
-    label="Download Filtered Titles CSV",
+    "Download Filtered Titles CSV",
     data=filtered.to_csv(index=False).encode("utf-8"),
     file_name="filtered_release_year_titles.csv",
     mime="text/csv",
@@ -198,6 +175,4 @@ st.download_button(
 )
 
 st.markdown("---")
-st.caption(
-    "Netflix Release-Year Analysis | Python • Pandas • Plotly • Streamlit"
-)
+st.caption("Netflix Release-Year Analysis | Python • Pandas • Plotly • Streamlit")
